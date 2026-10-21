@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoalWise Institute — Créez, animez et partagez vos systèmes de jeu</title>
+<meta name="description" content="Le playbook numérique de GoalWise Institute. Dessinez vos systèmes de basketball, animez-les en temps réel et exportez-les en vidéo, images ou PDF. Gratuit, sans installation.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="78" font-size="78">🏀</text></svg>'>
+<style>
+  :root {
+    --cream: #faf4e8;        /* parquet clair, fond principal */
+    --cream-2: #f3e7d0;      /* parquet un peu plus chaud */
+    --floor: #efdcbd;        /* le sol du terrain, comme dans l'app */
+    --brown: #8a5a2b;        /* lignes du terrain */
+    --slate: #0f172a;        /* le sombre de l'app */
+    --slate-2: #1e293b;
+    --slate-3: #334155;
+    --ink: #26170a;          /* texte principal, brun très foncé */
+    --muted: #7a6c58;        /* texte secondaire chaud */
+    --orange: #f97316;       /* le ballon ! couleur primaire */
+    --orange-dark: #ea580c;
+    --orange-soft: #ffedd5;
+    --green: #15803d;        /* attaquants */
+    --red: #dc2626;          /* défenseurs */
+    --radius: 24px;
+    --radius-lg: 32px;
+    --shadow: 0 10px 34px rgba(76, 46, 8, .12);
+    --shadow-lg: 0 24px 60px rgba(76, 46, 8, .16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ===== Nav ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    gap: 34px;
+    padding: 14px 28px;
+    z-index: 50;
+    background: rgba(250, 244, 232, .85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(138, 90, 43, .12);
+  }
+  .wordmark {
+    font-weight: 900;
+    font-size: 20px;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wordmark .ball { font-size: 22px; }
+  .wordmark span.c { color: var(--orange); }
+  nav .links { display: flex; gap: 26px; margin-left: auto; }
+  nav .links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    transition: color .2s;
+  }
+  nav .links a:hover { color: var(--orange-dark); }
+
+  /* ===== Boutons ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--orange);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 16px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, .35);
+    transition: transform .2s, box-shadow .2s, background .2s;
+  }
+  .btn:hover { transform: translateY(-2px); background: var(--orange-dark); box-shadow: 0 12px 26px rgba(249, 115, 22, .42); }
+  .btn.small { padding: 10px 20px; font-size: 15px; box-shadow: 0 6px 14px rgba(249,115,22,.3); }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid rgba(38, 23, 10, .18);
+    box-shadow: none;
+  }
+  .btn.ghost:hover { border-color: var(--orange); color: var(--orange-dark); background: var(--orange-soft); }
+  .btn.on-dark { box-shadow: 0 10px 26px rgba(249, 115, 22, .45); }
+
+  /* ===== Sections ===== */
+  section { padding: 110px 28px; position: relative; }
+  .inner { max-width: 1160px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-block;
+    background: var(--orange-soft);
+    color: var(--orange-dark);
+    font-weight: 800;
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-weight: 900;
+    font-size: clamp(38px, 5.6vw, 64px);
+    line-height: 1.08;
+    letter-spacing: -0.5px;
+  }
+  h1 .hl { color: var(--orange); }
+  h2 {
+    font-weight: 900;
+    font-size: clamp(30px, 4vw, 44px);
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+  }
+  .lead { color: var(--muted); font-size: 18px; max-width: 560px; margin: 20px 0 34px; }
+
+  /* ===== Hero ===== */
+  #hero {
+    padding-top: 150px;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(249, 115, 22, .14), transparent 65%),
+      radial-gradient(700px 420px at -10% 30%, rgba(21, 128, 61, .08), transparent 60%),
+      var(--cream);
+  }
+  #hero .inner {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-note { margin-top: 18px; font-size: 14px; color: var(--muted); font-weight: 600; }
+
+  /* fenêtre mockup de l'app */
+  .window {
+    background: var(--slate-2);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transform: rotate(1.2deg);
+  }
+  .window .bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    background: var(--slate);
+  }
+  .window .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .window .bar .title {
+    margin-left: 10px;
+    color: #94a3b8;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .window canvas { display: block; width: 100%; height: auto; }
+
+  /* ===== Cartes fonctionnalités ===== */
+  #features { background: #fffdf8; border-top: 1px solid rgba(138,90,43,.1); border-bottom: 1px solid rgba(138,90,43,.1); }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 26px;
+    margin-top: 48px;
+  }
+  .card {
+    background: var(--cream);
+    border: 1px solid rgba(138, 90, 43, .12);
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+  .card .icon {
+    width: 56px; height: 56px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 18px;
+  }
+  .card h3 { font-weight: 900; font-size: 21px; margin-bottom: 8px; }
+  .card p { color: var(--muted); font-size: 16px; }
+  .card svg.mini { width: 100%; height: auto; margin-top: 20px; border-radius: 14px; }
+
+  /* ===== Bande animation (sombre, comme l'app) ===== */
+  #lecture { background: var(--slate); color: #fff; }
+  #lecture .inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
+  #lecture .lead { color: #b8c2d4; }
+  #lecture .eyebrow { background: rgba(249, 115, 22, .18); color: #fdba74; }
+  .frame {
+    background: var(--slate-2);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+  }
+  .frame canvas { display: block; width: 100%; height: auto; border-radius: 14px; }
+  .frame .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 6px 2px;
+  }
+  .frame .play {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 15px;
+  }
+  .frame .track { flex: 1; height: 6px; border-radius: 999px; background: var(--slate-3); position: relative; }
+  .frame .track i {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 42%;
+    border-radius: 999px;
+    background: var(--orange);
+    animation: prog 6.2s linear infinite;
+  }
+  @keyframes prog { from { width: 3%; } to { width: 97%; } }
+
+  /* ===== Exports ===== */
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-top: 46px;
+  }
+  .chip {
+    background: #fffdf8;
+    border: 1px solid rgba(138, 90, 43, .12);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .chip .em { font-size: 30px; display: block; margin-bottom: 10px; }
+  .chip b { display: block; font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+  .chip span { color: var(--muted); font-size: 14.5px; line-height: 1.5; display: block; }
+
+  /* ===== Stats ===== */
+  #stats { background: var(--cream-2); }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    text-align: center;
+  }
+  .stat b { display: block; font-size: clamp(40px, 5vw, 62px); font-weight: 900; color: var(--orange-dark); line-height: 1; }
+  .stat small { display: block; margin-top: 10px; font-weight: 700; color: var(--muted); font-size: 15px; }
+
+  /* ===== CTA final ===== */
+  #cta-final { padding-bottom: 130px; }
+  .mega {
+    background: var(--slate);
+    border-radius: var(--radius-lg);
+    padding: 72px 40px;
+    text-align: center;
+    color: #fff;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .mega::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(600px 300px at 50% -20%, rgba(249, 115, 22, .25), transparent 70%);
+  }
+  .mega > * { position: relative; }
+  .mega .lead { margin: 16px auto 34px; color: #b8c2d4; }
+
+  footer {
+    border-top: 1px solid rgba(138, 90, 43, .14);
+    padding: 36px 28px 46px;
+    color: var(--muted);
+    font-size: 14.5px;
+    font-weight: 600;
+  }
+  footer .cols {
+    max-width: 1160px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 40px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  footer a { color: var(--orange-dark); font-weight: 800; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .legal-links { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+  footer .legal-links a { color: var(--muted); font-weight: 700; }
+  footer .legal-links a:hover { color: var(--orange-dark); }
+
+  /* ===== Modales légales ===== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 23, 10, .45);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .legal-box {
+    background: #fffdf8;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    max-width: 620px;
+    width: 100%;
+    max-height: 82vh;
+    overflow-y: auto;
+    padding: 36px 38px;
+  }
+  .legal-box h3 { font-weight: 900; font-size: 24px; margin-bottom: 16px; }
+  .legal-box h4 { font-weight: 800; font-size: 16px; margin: 18px 0 6px; }
+  .legal-box p { color: var(--muted); font-size: 15px; margin-bottom: 8px; }
+  .legal-box a { color: var(--orange-dark); font-weight: 700; }
+  .legal-box .close {
+    margin-top: 22px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 950px) {
+    #hero .inner, #lecture .inner { grid-template-columns: 1fr; gap: 40px; }
+    .window { transform: none; }
+    .cards { grid-template-columns: 1fr; }
+    .chips { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 40px 20px; }
+    nav .links { display: none; }
+    section { padding: 80px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="wordmark" href="#hero"><span class="ball">🏀</span>GoalWise <span class="c">Institute</span></a>
+  <div class="links">
+    <a href="#features">Fonctionnalités</a>
+    <a href="#lecture">Animation</a>
+    <a href="#exports">Exports</a>
+  </div>
+  <a class="btn small" href="app.html">Lancer l'app</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="inner">
+    <div>
+      <span class="eyebrow">Le playbook numérique de votre club</span>
+      <h1>Vos systèmes de jeu <span class="hl">prennent vie</span></h1>
+      <p class="lead">Dessinez vos systèmes sur un vrai terrain, animez-les en temps réel et partagez-les à toute l'équipe. Dans le navigateur, sans installation, gratuitement.</p>
+      <div class="hero-ctas">
+        <a class="btn" href="app.html">🏀 Lancer l'application</a>
+        <a class="btn ghost" href="#features">Découvrir</a>
+      </div>
+      <p class="hero-note">Aucun compte requis · fonctionne hors ligne · un simple fichier</p>
+    </div>
+    <div class="window">
+      <div class="bar">
+        <span class="dot" style="background:#ff5f57"></span>
+        <span class="dot" style="background:#febc2e"></span>
+        <span class="dot" style="background:#28c840"></span>
+        <span class="title">GoalWise Institute — Système 1</span>
+      </div>
+      <canvas id="heroCanvas" width="640" height="520"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FONCTIONNALITÉS ===== -->
+<section id="features">
+  <div class="inner reveal">
+    <span class="eyebrow">Pensé pour les entraîneurs</span>
+    <h2>Tout se fait en glissant-déposant</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="icon" style="background:var(--orange-soft)">✋</div>
+        <h3>Dessinez phase par phase</h3>
+        <p>Cinq attaquants, jusqu'à cinq défenseurs, un terrain FIBA. Déposez le ballon sur un joueur pour une passe, sur le cercle pour un tir. Touches et lancers francs prêts à l'emploi.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="background:#dcfce7">📐</div>
+        <h3>La vraie notation de coach</h3>
+        <p>Posez un écran en déposant un joueur sur un défenseur : le T s'oriente tout seul. Courbez les trajectoires en tirant sur les flèches, point par point.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="background:#fee2e2">🎬</div>
+        <h3>Animez en un clic</h3>
+        <p>Les joueurs se déplacent, le ballon dribble, vole sur les passes et monte au cercle. Vitesse réglable, timeline précise à la frame.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="background:#e0e7ff">📤</div>
+        <h3>Partagez au vestiaire</h3>
+        <p>Vidéo pour le groupe WhatsApp, images et planche PDF pour le papier, fichier JSON pour échanger entre coachs. Tout part de l'app, en un clic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ANIMATION ===== -->
+<section id="lecture">
+  <div class="inner reveal">
+    <div>
+      <span class="eyebrow">Animation temps réel</span>
+      <h2>Regardez le système se jouer</h2>
+      <p class="lead">Ce que vous dessinez au tableau, vos joueurs le voient en mouvement. Passe et va, pick and roll, sortie d'écran : l'animation rend le système évident, même pour les plus jeunes.</p>
+      <a class="btn on-dark" href="app.html">Voir en mouvement</a>
+    </div>
+    <div class="frame">
+      <canvas id="playCanvas" width="640" height="470"></canvas>
+      <div class="controls">
+        <span class="play">▶</span>
+        <span class="track"><i></i></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXPORTS ===== -->
+<section id="exports">
+  <div class="inner reveal" style="text-align:center">
+    <span class="eyebrow">Du terrain au vestiaire</span>
+    <h2>Vos systèmes voyagent partout</h2>
+    <div class="chips">
+      <div class="chip"><span class="em">🎥</span><b>Vidéo</b><span>L'animation complète en MP4/WebM, prête pour le groupe de l'équipe.</span></div>
+      <div class="chip"><span class="em">🖼️</span><b>Images</b><span>Un PNG par phase avec flèches et écrans, pour le tableau blanc.</span></div>
+      <div class="chip"><span class="em">🖨️</span><b>Planche PDF</b><span>Toutes les phases en grille imprimable. Le playbook papier en un clic.</span></div>
+      <div class="chip"><span class="em">💾</span><b>JSON</b><span>Le système complet dans un fichier, à réimporter à l'identique.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section id="stats">
+  <div class="inner reveal">
+    <div class="stats">
+      <div class="stat"><b>0</b><small>installation, zéro compte</small></div>
+      <div class="stat"><b>1</b><small>fichier, fonctionne hors ligne</small></div>
+      <div class="stat"><b>10</b><small>joueurs animés sur le terrain</small></div>
+      <div class="stat"><b>∞</b><small>systèmes à imaginer</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section id="cta-final">
+  <div class="inner reveal">
+    <div class="mega">
+      <span class="eyebrow" style="background:rgba(249,115,22,.18);color:#fdba74">Prêt pour le prochain entraînement ?</span>
+      <h2>Le prochain système<br>commence ici</h2>
+      <p class="lead">Ouvrez l'application, placez vos joueurs, appuyez sur lecture.</p>
+      <a class="btn" href="app.html">🏀 Lancer l'application</a>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="cols">
+    <div>
+      🏀 <b>GoalWise Institute</b><br>
+      <span style="color:var(--muted);font-weight:700">Contact : GoalWise Institute</span>
+    </div>
+    <div class="legal-links">
+      <a href="app.html">Application</a>
+      <a href="#contact">Contact</a>
+      <a href="#" data-legal="mentions">Mentions légales</a>
+      <a href="#" data-legal="confidentialite">Confidentialité</a>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="legal-mentions">
+  <div class="legal-box">
+    <h3>Mentions légales</h3>
+    <h4>Éditeur</h4>
+    <p>GoalWise Institute édite ce playbook numérique.<br>
+    Contact : GoalWise Institute</p>
+    <h4>Hébergement</h4>
+    <p>Ce site est un site statique. Il peut être hébergé sur GitHub Pages (GitHub, Inc., 88 Colin P. Kelly Jr. St, San Francisco, CA 94107, USA) ou ouvert localement sans aucun serveur.</p>
+    <h4>Propriété intellectuelle</h4>
+    <p>L'application, son code et ses contenus sont la propriété de GoalWise Institute. Les systèmes de jeu que vous créez vous appartiennent entièrement.</p>
+    <h4>Responsabilité</h4>
+    <p>L'application est fournie « en l'état », sans garantie d'aucune sorte. L'auteur ne saurait être tenu responsable d'un dommage résultant de son utilisation.</p>
+    <button class="btn close">Fermer</button>
+  </div>
+</div>
+
+<div class="overlay" id="legal-confidentialite">
+  <div class="legal-box">
+    <h3>Politique de confidentialité</h3>
+    <h4>Aucune collecte de données</h4>
+    <p>GoalWise Institute ne collecte, ne transmet et ne stocke aucune donnée personnelle sur un serveur. Il n'y a ni compte, ni formulaire, ni outil d'analyse d'audience, ni cookie.</p>
+    <h4>Stockage local</h4>
+    <p>Vos systèmes de jeu sont enregistrés uniquement dans le stockage local de votre navigateur (localStorage), sur votre appareil. Ils ne quittent jamais votre machine, sauf si vous les exportez volontairement (JSON, vidéo, images, PDF).</p>
+    <h4>Polices de caractères</h4>
+    <p>Cette page d'accueil charge la police Nunito depuis Google Fonts, ce qui implique une requête vers les serveurs de Google. L'application elle-même n'effectue aucune requête externe.</p>
+    <h4>Contact</h4>
+    <p>Pour toute question, contactez GoalWise Institute.</p>
+    <button class="btn close">Fermer</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ===== Modales légales ===== */
+document.querySelectorAll("[data-legal]").forEach((a) => {
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("legal-" + a.dataset.legal).classList.add("show");
+  });
+});
+document.querySelectorAll(".overlay").forEach((ov) => {
+  ov.addEventListener("click", (e) => { if (e.target === ov) ov.classList.remove("show"); });
+  ov.querySelector(".close").addEventListener("click", () => ov.classList.remove("show"));
+});
+
+/* ===== Reveal au scroll ===== */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in"); });
+}, { threshold: 0.12 });
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+/* ===== Couleurs de l'app ===== */
+const C = {
+  floor: "#efdcbd", key: "#e4bd8c", line: "#8a5a2b",
+  green: "#15803d", red: "#dc2626", ball: "#f97316", ballEdge: "#7c2d12",
+};
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => t * t * (3 - 2 * t);
+
+/* dessine un demi-terrain (panier en haut) dans un canvas, coords [0..15]x[0..14] */
+function makeCourt(cv) {
+  const ctx = cv.getContext("2d");
+  const s = Math.min(cv.width / 16.4, cv.height / 15.4);
+  const ox = (cv.width - 15 * s) / 2, oy = (cv.height - 14 * s) / 2;
+  const P = (x, y) => [ox + x * s, oy + y * s];
+  function draw() {
+    ctx.fillStyle = C.floor;
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.strokeStyle = C.line;
+    ctx.lineWidth = Math.max(1.2, s * 0.05);
+    // raquette peinte
+    ctx.fillStyle = C.key;
+    ctx.fillRect(...P(5.05, 0), 4.9 * s, 5.8 * s);
+    ctx.strokeRect(...P(0, 0), 15 * s, 14 * s);
+    ctx.strokeRect(...P(5.05, 0), 4.9 * s, 5.8 * s);
+    ctx.beginPath(); ctx.arc(...P(7.5, 5.8), 1.8 * s, 0, Math.PI * 2); ctx.stroke();
+    // 3 points
+    ctx.beginPath(); ctx.arc(...P(7.5, 1.575), 6.75 * s, 0.21, Math.PI - 0.21); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(...P(0.9, 0)); ctx.lineTo(...P(0.9, 2.99)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(...P(14.1, 0)); ctx.lineTo(...P(14.1, 2.99)); ctx.stroke();
+    // planche + arceau
+    ctx.beginPath(); ctx.moveTo(...P(6.6, 1.2)); ctx.lineTo(...P(8.4, 1.2)); ctx.lineWidth = s * 0.1; ctx.stroke();
+    ctx.lineWidth = Math.max(1.2, s * 0.05);
+    ctx.beginPath(); ctx.arc(...P(7.5, 1.575), 0.225 * s, 0, Math.PI * 2);
+    ctx.strokeStyle = "#c2410c"; ctx.stroke();
+    ctx.strokeStyle = C.line;
+  }
+  function token(x, y, color, n) {
+    const [px, py] = P(x, y);
+    const r = 0.45 * s;
+    ctx.beginPath(); ctx.ellipse(px, py + r * 0.45, r * 0.95, r * 0.4, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,.15)"; ctx.fill();
+    ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.lineWidth = Math.max(1.5, r * 0.14); ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.font = `900 ${r * 1.05}px Nunito, Arial`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(n, px, py + r * 0.06);
+  }
+  // held : décalage "dans les mains" seulement si le ballon est porté
+  function ball(x, y, scale = 1, held = true) {
+    const [px, py] = held ? P(x + 0.48, y - 0.32) : P(x, y);
+    const r = 0.26 * s * scale;
+    ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
+    ctx.fillStyle = C.ball; ctx.fill();
+    ctx.lineWidth = Math.max(1, r * 0.18); ctx.strokeStyle = C.ballEdge; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px - r, py); ctx.lineTo(px + r, py);
+    ctx.moveTo(px, py - r); ctx.lineTo(px, py + r);
+    ctx.lineWidth = Math.max(0.7, r * 0.1); ctx.stroke();
+  }
+  return { ctx, draw, token, ball };
+}
+
+/* boucle d'animation générique sur des keyframes {p:[{x,y}...], ball} */
+function runLoop(cv, K, colors, DUR, HOOP) {
+  const court = makeCourt(cv);
+  let t0 = performance.now();
+  function frame(now) {
+    const total = (K.length - 1) * DUR + 0.6;
+    const tt = (((now - t0) / 1000) % total + total) % total;
+    const seg = Math.min(K.length - 2, Math.floor(tt / DUR));
+    const local = Math.min(1, tt / DUR - seg);
+    const e = ease(local);
+    const A = K[seg], B = K[seg + 1];
+    court.draw();
+    const pos = A.p.map((pa, i) => ({ x: lerp(pa.x, B.p[i].x, e), y: lerp(pa.y, B.p[i].y, e) }));
+    pos.forEach((p, i) => court.token(p.x, p.y, colors[i].c, colors[i].n));
+    let bp, scale = 1, held = true;
+    if (A.ball === B.ball && typeof A.ball === "number") {
+      bp = pos[A.ball];
+      const d = Math.hypot(A.p[A.ball].x - B.p[A.ball].x, A.p[A.ball].y - B.p[A.ball].y);
+      if (d > 0.8) scale = 0.7 + 0.3 * Math.abs(Math.sin(Math.PI * 4 * local));
+    } else if (typeof A.ball === "number" && typeof B.ball === "number") {
+      bp = { x: lerp(pos[A.ball].x, pos[B.ball].x, e), y: lerp(pos[A.ball].y, pos[B.ball].y, e) };
+    } else if (B.ball === "shot") {
+      // tir : le ballon termine exactement au cercle
+      bp = { x: lerp(pos[A.ball].x + 0.48, HOOP.x, e), y: lerp(pos[A.ball].y - 0.32, HOOP.y, e) };
+      scale = 1 - 0.3 * Math.sin(Math.PI * e);
+      held = false;
+    } else {
+      bp = { x: lerp(HOOP.x, pos[B.ball].x + 0.48, e), y: lerp(HOOP.y, pos[B.ball].y - 0.32, e) };
+      held = false;
+    }
+    court.ball(bp.x, bp.y, scale, held);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+const HOOP = { x: 7.5, y: 1.575 };
+
+/* ===== Hero : un vrai système, exporté depuis l'application =====
+   Rejoué avec la même logique que l'app : trajectoires courbes
+   (Catmull-Rom), écrans en T, dribble, passes et tir. */
+const SYSTEM = {"app":"basketballcoach-web","version":1,"title":"Nouveau syst\u00e8me","courtMode":"half","defenders":5,"phases":[{"name":"Phase 1","duration":1.5,"ball":"a1","pos":{"a1":{"x":8.6,"y":7.5},"a2":{"x":7,"y":2.6},"a3":{"x":7,"y":12.4},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":7.1,"y":7.5},"d2":{"x":5.886846035873292,"y":3.6054293869531553},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[],"via":{}},{"name":"Phase 2","duration":1.5,"ball":"a3","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":7,"y":2.6},"a3":{"x":7,"y":12.4},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":7.1,"y":7.5},"d2":{"x":5.886846035873292,"y":3.6054293869531553},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[{"s":"a1","d":"d3"}],"via":{}},{"name":"Phase 3","duration":1.5,"ball":"a3","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":7,"y":2.6},"a3":{"x":5.702381303648068,"y":8.790578728540773},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":4.7939552038626605,"y":8.198157859442059},"d2":{"x":5.886846035873292,"y":3.6054293869531553},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[],"via":{"a3":[{"x":7.22965933476395,"y":10.303169259656652}],"d1":[{"x":5.78939981223176,"y":7.634438707081546}]}},{"name":"Phase 4","duration":1.5,"ball":"a3","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":8.817285407725322,"y":7.454513814377682},"a3":{"x":5.702381303648068,"y":8.790578728540773},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":4.7939552038626605,"y":8.198157859442059},"d2":{"x":7.075881711838957,"y":6.194420132661309},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[],"via":{"a2":[{"x":8.40511534334764,"y":4.8982986856223185}]}},{"name":"Phase 5","duration":1.5,"ball":"a2","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":8.817285407725322,"y":7.454513814377682},"a3":{"x":5.702381303648068,"y":8.790578728540773},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":4.7939552038626605,"y":8.198157859442059},"d2":{"x":7.075881711838957,"y":6.194420132661309},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[],"via":{}},{"name":"Phase 6","duration":1.5,"ball":"a2","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":8.817285407725322,"y":7.454513814377682},"a3":{"x":6.6019527896995704,"y":5.366058208154508},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":4.7939552038626605,"y":8.198157859442059},"d2":{"x":7.075881711838957,"y":6.194420132661309},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[{"s":"a3","d":"d2"}],"via":{"a3":[{"x":5.9112909066523605,"y":6.9354660675965665}]}},{"name":"Phase 7","duration":1.5,"ball":"a2","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":5.088743293991416,"y":4.586596700643776},"a3":{"x":6.6019527896995704,"y":5.366058208154508},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":4.7939552038626605,"y":8.198157859442059},"d2":{"x":7.075881711838957,"y":6.194420132661309},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[],"via":{"a2":[{"x":6.972188841201717,"y":4.672278701716738}]}},{"name":"Phase 8","duration":1.5,"ball":"shot","pos":{"a1":{"x":6.488470359442059,"y":10.785247451716739},"a2":{"x":5.088743293991416,"y":4.586596700643776},"a3":{"x":6.6019527896995704,"y":5.366058208154508},"a4":{"x":2.6,"y":5.1},"a5":{"x":2.6,"y":9.9},"d1":{"x":4.7939552038626605,"y":8.198157859442059},"d2":{"x":7.075881711838957,"y":6.194420132661309},"d3":{"x":5.886846035873292,"y":11.394570613046845},"d4":{"x":2.0108557541134533,"y":6.479459697685573},"d5":{"x":2.0108557541134533,"y":8.520540302314426}},"screens":[],"via":{}}],"situation":"defaut"};
+
+(function heroSystem() {
+  const cv = document.getElementById("heroCanvas");
+  const court = makeCourt(cv);
+  const ctx = court.ctx;
+  const s = Math.min(cv.width / 16.4, cv.height / 15.4);
+  const ox = (cv.width - 15 * s) / 2, oy = (cv.height - 14 * s) / 2;
+  const SP = (x, y) => [ox + x * s, oy + y * s];
+
+  // coordonnées app (x = distance ligne de fond, y = largeur) -> vue (panier en haut)
+  const V = (p) => ({ x: 15 - p.y, y: p.x });
+  const ATT = ["a1", "a2", "a3", "a4", "a5"];
+  const DEF = ["d1", "d2", "d3", "d4", "d5"].slice(0, SYSTEM.defenders);
+  const IDS = [...ATT, ...DEF];
+  const HOOP_APP = { x: 1.575, y: 7.5 };
+  const ph = SYSTEM.phases;
+  const START_HOLD = 0.6, END_HOLD = 1.2;
+  let TOTAL = START_HOLD + END_HOLD;
+  for (let i = 1; i < ph.length; i++) TOTAL += ph[i].duration || 1.5;
+
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+  function crPoint(pts, t) {
+    const n = pts.length - 1;
+    if (n <= 0) return { ...pts[0] };
+    const ft = clamp01(t) * n;
+    const i = Math.min(n - 1, Math.floor(ft));
+    const u = ft - i;
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(n, i + 2)];
+    const cr = (a, b, c, d) =>
+      0.5 * (2 * b + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u * u + (-a + 3 * b - 3 * c + d) * u * u * u);
+    return { x: cr(p0.x, p1.x, p2.x, p3.x), y: cr(p0.y, p1.y, p2.y, p3.y) };
+  }
+  const pathPts = (A, B, id) => [A.pos[id], ...((B.via && B.via[id]) || []), B.pos[id]];
+  function posAlong(A, B, id, e) {
+    const pts = pathPts(A, B, id);
+    if (pts.length > 2) return crPoint(pts, e);
+    return { x: lerp(pts[0].x, pts[1].x, e), y: lerp(pts[0].y, pts[1].y, e) };
+  }
+  const moving = (A, B, id) =>
+    Math.hypot(A.pos[id].x - B.pos[id].x, A.pos[id].y - B.pos[id].y) > 0.8 ||
+    ((B.via && B.via[id]) || []).length > 0;
+
+  function drawScreenT(sAppPos, dAppPos, alpha) {
+    const sp = V(sAppPos), dp = V(dAppPos);
+    const dx = dp.x - sp.x, dy = dp.y - sp.y;
+    const n = Math.hypot(dx, dy) || 1;
+    const ux = dx / n, uy = dy / n;
+    const bar = { x: dp.x - ux * 0.75, y: dp.y - uy * 0.75 };
+    const HB = 0.65, TAIL = 0.6;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineCap = "round";
+    ctx.lineWidth = Math.max(3, s * 0.13);
+    ctx.beginPath();
+    ctx.moveTo(...SP(bar.x + uy * HB, bar.y - ux * HB));
+    ctx.lineTo(...SP(bar.x - uy * HB, bar.y + ux * HB));
+    ctx.moveTo(...SP(bar.x, bar.y));
+    ctx.lineTo(...SP(bar.x - ux * TAIL, bar.y - uy * TAIL));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function sample(t) {
+    const out = { pos: {}, screens: [], ball: null, scale: 1, held: true };
+    const stat = (P) => {
+      IDS.forEach((id) => (out.pos[id] = P.pos[id]));
+      out.screens = (P.screens || []).map((sc) => ({ s: P.pos[sc.s], d: P.pos[sc.d], a: 1 }));
+      out.ball = P.ball === "shot" ? HOOP_APP : P.pos[P.ball];
+      out.held = P.ball !== "shot";
+    };
+    if (t <= START_HOLD) { stat(ph[0]); return out; }
+    let acc = START_HOLD;
+    for (let i = 1; i < ph.length; i++) {
+      const dur = ph[i].duration || 1.5;
+      if (t < acc + dur || i === ph.length - 1) {
+        const local = clamp01((t - acc) / dur);
+        const e = ease(local);
+        const A = ph[i - 1], B = ph[i];
+        IDS.forEach((id) => (out.pos[id] = posAlong(A, B, id, e)));
+        out.screens = (B.screens || []).map((sc) => ({
+          s: B.pos[sc.s], d: B.pos[sc.d], a: clamp01((e - 0.65) / 0.3),
+        }));
+        if (A.ball !== "shot" && B.ball === "shot") {
+          // tir : le ballon termine exactement au cercle
+          out.ball = { x: lerp(out.pos[A.ball].x, HOOP_APP.x, e), y: lerp(out.pos[A.ball].y, HOOP_APP.y, e) };
+          out.scale = 1 - 0.3 * Math.sin(Math.PI * e);
+          out.held = false;
+        } else if (A.ball === "shot") {
+          out.ball = B.ball === "shot" ? HOOP_APP
+            : { x: lerp(HOOP_APP.x, out.pos[B.ball].x, e), y: lerp(HOOP_APP.y, out.pos[B.ball].y, e) };
+          out.held = false;
+        } else if (A.ball !== B.ball) {
+          out.ball = { x: lerp(out.pos[A.ball].x, out.pos[B.ball].x, e), y: lerp(out.pos[A.ball].y, out.pos[B.ball].y, e) };
+        } else {
+          out.ball = out.pos[A.ball];
+          if (moving(A, B, A.ball)) out.scale = 0.7 + 0.3 * Math.abs(Math.sin(Math.PI * 4 * local));
+        }
+        return out;
+      }
+      acc += dur;
+    }
+    stat(ph[ph.length - 1]);
+    return out;
+  }
+
+  let t0 = performance.now();
+  function frame(now) {
+    const t = (((now - t0) / 1000) % TOTAL + TOTAL) % TOTAL;
+    const S = sample(t);
+    court.draw();
+    IDS.forEach((id) => {
+      const v = V(S.pos[id]);
+      court.token(v.x, v.y, id[0] === "a" ? C.green : C.red, id[1]);
+    });
+    S.screens.forEach((sc) => { if (sc.a > 0) drawScreenT(sc.s, sc.d, sc.a); });
+    const bv = V(S.ball);
+    court.ball(bv.x, bv.y, S.scale, S.held);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* Bande animation : passe et va */
+runLoop(
+  document.getElementById("playCanvas"),
+  [
+    { p: [{x:7.5,y:9.6},{x:12.4,y:6.8},{x:8.2,y:8.6}], ball: 0 },
+    { p: [{x:7.5,y:9.6},{x:12.4,y:6.8},{x:8.2,y:8.6}], ball: 1 },
+    { p: [{x:8.6,y:3.4},{x:12.4,y:6.8},{x:9.4,y:5.4}], ball: 1 },
+    { p: [{x:8.6,y:3.4},{x:12.4,y:6.8},{x:9.4,y:5.4}], ball: 0 },
+    { p: [{x:8.6,y:3.4},{x:12.4,y:6.8},{x:9.4,y:5.4}], ball: "shot" },
+    { p: [{x:7.5,y:9.6},{x:12.4,y:6.8},{x:8.2,y:8.6}], ball: 0 },
+  ],
+  [{c:C.green,n:1},{c:C.green,n:2},{c:C.red,n:1}],
+  1.5, HOOP
+);
+</script>
+</body>
+</html>
